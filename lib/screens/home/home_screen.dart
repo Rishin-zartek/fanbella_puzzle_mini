@@ -55,6 +55,7 @@ class HomeScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final puzzle = puzzles[index];
                   return GestureDetector(
+                    key: Key('puzzle_card_$index'),
                     onTap: () {
                       ref.read(selectedPuzzleProvider.notifier).state = puzzle;
                       Navigator.push(
@@ -64,61 +65,65 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       );
                     },
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: CachedNetworkImage(
-                              imageUrl: puzzle.imageUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: AppTheme.cardBackground,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
+                    child: Semantics(
+                      label: 'Puzzle: ${puzzle.title}',
+                      button: true,
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: CachedNetworkImage(
+                                imageUrl: puzzle.imageUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: AppTheme.cardBackground,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppTheme.primaryRed,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: AppTheme.cardBackground,
+                                  child: const Icon(
+                                    Icons.error_outline,
                                     color: AppTheme.primaryRed,
+                                    size: 48,
                                   ),
                                 ),
                               ),
-                              errorWidget: (context, url, error) => Container(
-                                color: AppTheme.cardBackground,
-                                child: const Icon(
-                                  Icons.error_outline,
-                                  color: AppTheme.primaryRed,
-                                  size: 48,
-                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    puzzle.title,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    puzzle.description,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  puzzle.title,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  puzzle.description,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppTheme.textSecondary,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

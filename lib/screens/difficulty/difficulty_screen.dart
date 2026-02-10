@@ -86,19 +86,23 @@ class DifficultyScreen extends ConsumerWidget {
             ...DifficultyLevel.values.map((difficulty) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: _DifficultyCard(
-                  difficulty: difficulty,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GameScreen(
-                          puzzle: puzzle,
-                          difficulty: difficulty,
+                child: Semantics(
+                  label: 'Select ${difficulty.label} difficulty',
+                  button: true,
+                  child: _DifficultyCard(
+                    difficulty: difficulty,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameScreen(
+                            puzzle: puzzle,
+                            difficulty: difficulty,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               );
             }),
