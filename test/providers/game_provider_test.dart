@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_puzzle_game/providers/game_provider.dart';
-import 'package:movie_puzzle_game/models/tile.dart';
 import 'package:movie_puzzle_game/models/puzzle_config.dart';
 import 'package:movie_puzzle_game/core/constants/app_constants.dart';
 

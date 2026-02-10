@@ -153,7 +153,7 @@ class _DifficultyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _difficultyColor.withOpacity(0.2),
+                  color: _difficultyColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -227,7 +227,7 @@ class _InfoChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.gold.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

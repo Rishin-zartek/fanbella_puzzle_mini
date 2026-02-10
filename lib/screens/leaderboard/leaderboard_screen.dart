@@ -79,7 +79,7 @@ class _LeaderboardTab extends ConsumerWidget {
                 Icon(
                   Icons.emoji_events_outlined,
                   size: 64,
-                  color: AppTheme.textSecondary.withOpacity(0.5),
+                  color: AppTheme.textSecondary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -94,7 +94,7 @@ class _LeaderboardTab extends ConsumerWidget {
                   'Complete a puzzle to see your score here!',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondary.withOpacity(0.7),
+                    color: AppTheme.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -208,7 +208,7 @@ class _PodiumPlace extends StatelessWidget {
           width: 80,
           height: height,
           decoration: BoxDecoration(
-            color: AppTheme.primaryRed.withOpacity(0.2),
+            color: AppTheme.primaryRed.withValues(alpha: 0.2),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             border: Border.all(color: AppTheme.primaryRed, width: 2),
           ),
