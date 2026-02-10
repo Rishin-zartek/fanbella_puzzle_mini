@@ -1,16 +1,11 @@
-import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
-import 'package:http/http.dart' as http;
 import '../models/tile.dart';
 
 class ImageService {
-  Future<Uint8List> downloadImage(String url) async {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      return response.bodyBytes;
-    } else {
-      throw Exception('Failed to download image: ${response.statusCode}');
-    }
+  Future<Uint8List> loadImageFromAssets(String assetPath) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    return data.buffer.asUint8List();
   }
 
   Future<List<Tile>> splitImageIntoTiles(

@@ -78,7 +78,7 @@ class GameNotifier extends StateNotifier<GameState> {
 
   Future<void> _initializeGame() async {
     try {
-      final imageData = await _imageService.downloadImage(state.puzzle.imageUrl);
+      final imageData = await _imageService.loadImageFromAssets(state.puzzle.imageUrl);
       final tiles = await _imageService.splitImageIntoTiles(
         imageData,
         state.difficulty.gridSize,

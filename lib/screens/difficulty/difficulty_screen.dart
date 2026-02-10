@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/puzzle_provider.dart';
@@ -33,17 +32,19 @@ class DifficultyScreen extends ConsumerWidget {
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: puzzle.imageUrl,
+                  Image.asset(
+                    puzzle.imageUrl,
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
+                    errorBuilder: (context, error, stackTrace) => Container(
                       height: 200,
                       color: AppTheme.cardBackground,
                       child: const Center(
-                        child: CircularProgressIndicator(
+                        child: Icon(
+                          Icons.error_outline,
                           color: AppTheme.primaryRed,
+                          size: 48,
                         ),
                       ),
                     ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../providers/puzzle_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../difficulty/difficulty_screen.dart';
@@ -74,18 +73,10 @@ class HomeScreen extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
-                              child: CachedNetworkImage(
-                                imageUrl: puzzle.imageUrl,
+                              child: Image.asset(
+                                puzzle.imageUrl,
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: AppTheme.cardBackground,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppTheme.primaryRed,
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
+                                errorBuilder: (context, error, stackTrace) => Container(
                                   color: AppTheme.cardBackground,
                                   child: const Icon(
                                     Icons.error_outline,
