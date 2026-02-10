@@ -61,10 +61,9 @@ class GameState {
 
 class GameNotifier extends StateNotifier<GameState> {
   final ImageService _imageService = ImageService();
-  final StorageService _storageService;
   Timer? _timer;
 
-  GameNotifier(this._storageService, PuzzleConfig puzzle, DifficultyLevel difficulty)
+  GameNotifier(PuzzleConfig puzzle, DifficultyLevel difficulty)
       : super(GameState(
           tiles: [],
           moves: 0,
@@ -163,7 +162,8 @@ class GameNotifier extends StateNotifier<GameState> {
       completedAt: DateTime.now(),
     );
 
-    await _storageService.saveScore(score);
+    final storage = await StorageService.getInstance();
+    await storage.saveScore(score);
   }
 
   void resetGame() {
@@ -193,7 +193,6 @@ final gameProvider = StateNotifierProvider.family<GameNotifier, GameState, Map<S
     final puzzle = params['puzzle'] as PuzzleConfig;
     final difficulty = params['difficulty'] as DifficultyLevel;
     return GameNotifier(
-      StorageService._instance!,
       puzzle,
       difficulty,
     );

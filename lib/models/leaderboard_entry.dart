@@ -1,3 +1,5 @@
+import 'score.dart';
+
 class LeaderboardEntry {
   final String scoreId;
   final String puzzleTitle;
@@ -64,6 +66,3 @@ class LeaderboardEntry {
     );
   }
 }
-
-// Import Score model
-import 'score.dart';
