@@ -1,4 +1,39 @@
-# Release Notes - v1.0.0 (Local Assets Build)
+# Release Notes
+
+## Version 1.0.2 (Build 3) - February 11, 2026
+
+### 🐛 Bug Fixes
+- **Fixed game screen not loading properly**: Resolved issue where game provider was recreating instances on every rebuild due to Map parameter identity comparison
+- Added `GameParams` class with proper equality implementation for stable provider family usage
+- Added `autoDispose` to game provider to prevent memory leaks
+
+### ✨ New Features
+- **Automated gameplay testing**: Added puzzle solver with greedy algorithm and Manhattan distance heuristic
+- **Comprehensive integration tests**: 6 new automated gameplay tests covering all difficulty levels
+- **Game screen widget tests**: Added tests to verify game screen loads and functions correctly
+
+### 📊 Test Coverage
+- Total tests: 63 (up from 50)
+- New tests added: 13
+  - 4 puzzle solver unit tests
+  - 6 automated gameplay integration tests
+  - 3 game screen widget tests
+- All tests passing ✅
+
+### 🔧 Technical Improvements
+- Improved provider state management with proper equality checks
+- Better memory management with autoDispose providers
+- Enhanced test coverage for game flow and solver integration
+
+### 📦 Build Information
+- APK Size: 51.0 MB
+- Flutter Version: 3.41.0
+- Dart Version: 3.11.0
+- Build Date: February 11, 2026
+
+---
+
+## Version 1.0.0 (Build 1) - Local Assets Build
 
 ## Overview
 This release fixes photo and game loading issues by bundling local assets instead of loading from the internet. All images are now included in the APK, ensuring the app works without internet connectivity.
