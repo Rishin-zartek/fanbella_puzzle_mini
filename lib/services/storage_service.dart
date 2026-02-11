@@ -12,25 +12,46 @@ class StorageService {
   static Future<StorageService> getInstance() async {
     if (_instance == null) {
       _instance = StorageService._();
-      _prefs = await SharedPreferences.getInstance();
+      try {
+        _prefs = await SharedPreferences.getInstance();
+      } catch (e) {
+        print('Warning: Failed to initialize SharedPreferences: $e');
+        // Continue without SharedPreferences - app will work but won't save scores
+      }
     }
     return _instance!;
   }
 
   Future<void> saveScore(Score score) async {
-    final scores = await getScores();
-    scores.add(score);
+    if (_prefs == null) {
+      print('Warning: Cannot save score - SharedPreferences not initialized');
+      return;
+    }
     
-    final scoresJson = scores.map((s) => s.toJson()).toList();
-    await _prefs!.setString(AppConstants.scoresKey, jsonEncode(scoresJson));
+    try {
+      final scores = await getScores();
+      scores.add(score);
+      
+      final scoresJson = scores.map((s) => s.toJson()).toList();
+      await _prefs!.setString(AppConstants.scoresKey, jsonEncode(scoresJson));
+    } catch (e) {
+      print('Error saving score: $e');
+    }
   }
 
   Future<List<Score>> getScores() async {
-    final scoresString = _prefs!.getString(AppConstants.scoresKey);
-    if (scoresString == null) return [];
+    if (_prefs == null) return [];
+    
+    try {
+      final scoresString = _prefs!.getString(AppConstants.scoresKey);
+      if (scoresString == null) return [];
 
-    final List<dynamic> scoresJson = jsonDecode(scoresString);
-    return scoresJson.map((json) => Score.fromJson(json)).toList();
+      final List<dynamic> scoresJson = jsonDecode(scoresString);
+      return scoresJson.map((json) => Score.fromJson(json)).toList();
+    } catch (e) {
+      print('Error loading scores: $e');
+      return [];
+    }
   }
 
   Future<List<Score>> getDailyScores() async {
@@ -85,6 +106,12 @@ class StorageService {
   }
 
   Future<void> clearAllScores() async {
-    await _prefs!.remove(AppConstants.scoresKey);
+    if (_prefs == null) return;
+    
+    try {
+      await _prefs!.remove(AppConstants.scoresKey);
+    } catch (e) {
+      print('Error clearing scores: $e');
+    }
   }
 }

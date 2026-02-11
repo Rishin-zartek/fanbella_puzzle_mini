@@ -14,18 +14,28 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🎬 Movie Puzzle Game'),
+        title: Semantics(
+          label: 'Movie Puzzle Game',
+          header: true,
+          child: const Text('🎬 Movie Puzzle Game', key: Key('app_title')),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.leaderboard, color: AppTheme.gold),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LeaderboardScreen(),
-                ),
-              );
-            },
+          Semantics(
+            label: 'View Leaderboard',
+            button: true,
+            child: IconButton(
+              key: const Key('leaderboard_button'),
+              icon: const Icon(Icons.leaderboard, color: AppTheme.gold),
+              tooltip: 'Leaderboard',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LeaderboardScreen(),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -34,92 +44,123 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Choose a Puzzle',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.gold,
-                  ),
+            Semantics(
+              label: 'Choose a Puzzle',
+              header: true,
+              child: Text(
+                'Choose a Puzzle',
+                key: const Key('choose_puzzle_header'),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.gold,
+                    ),
+              ),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: puzzles.length,
-                itemBuilder: (context, index) {
-                  final puzzle = puzzles[index];
-                  return GestureDetector(
-                    key: Key('puzzle_card_$index'),
-                    onTap: () {
-                      ref.read(selectedPuzzleProvider.notifier).state = puzzle;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DifficultyScreen(),
-                        ),
-                      );
-                    },
-                    child: Semantics(
-                      label: 'Puzzle: ${puzzle.title}',
-                      button: true,
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: Image.asset(
-                                puzzle.imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  color: AppTheme.cardBackground,
-                                  child: const Icon(
-                                    Icons.error_outline,
-                                    color: AppTheme.primaryRed,
-                                    size: 48,
-                                  ),
-                                ),
-                              ),
+              child: puzzles.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.movie_outlined,
+                            size: 64,
+                            color: AppTheme.textSecondary,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No puzzles available',
+                            key: const Key('no_puzzles_text'),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: AppTheme.textSecondary,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
+                          ),
+                        ],
+                      ),
+                    )
+                  : GridView.builder(
+                      key: const Key('puzzle_grid'),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: puzzles.length,
+                      itemBuilder: (context, index) {
+                        final puzzle = puzzles[index];
+                        return GestureDetector(
+                          key: Key('puzzle_card_$index'),
+                          onTap: () {
+                            ref.read(selectedPuzzleProvider.notifier).state = puzzle;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const DifficultyScreen(),
+                              ),
+                            );
+                          },
+                          child: Semantics(
+                            label: 'Puzzle: ${puzzle.title}. ${puzzle.description}',
+                            button: true,
+                            child: Card(
+                              clipBehavior: Clip.antiAlias,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Text(
-                                    puzzle.title,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                  Expanded(
+                                    child: Image.asset(
+                                      puzzle.imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        debugPrint('Error loading image ${puzzle.imageUrl}: $error');
+                                        return Container(
+                                          color: AppTheme.cardBackground,
+                                          child: const Icon(
+                                            Icons.error_outline,
+                                            color: AppTheme.primaryRed,
+                                            size: 48,
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    puzzle.description,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppTheme.textSecondary,
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          puzzle.title,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          puzzle.description,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppTheme.textSecondary,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
