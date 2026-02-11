@@ -22,14 +22,14 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
+  late final gameParams = GameParams(
+    puzzle: widget.puzzle,
+    difficulty: widget.difficulty,
+  );
+
   @override
   Widget build(BuildContext context) {
-    final gameState = ref.watch(
-      gameProvider({
-        'puzzle': widget.puzzle,
-        'difficulty': widget.difficulty,
-      }),
-    );
+    final gameState = ref.watch(gameProvider(gameParams));
 
     if (gameState.isCompleted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -55,12 +55,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              ref
-                  .read(gameProvider({
-                    'puzzle': widget.puzzle,
-                    'difficulty': widget.difficulty,
-                  }).notifier)
-                  .resetGame();
+              ref.read(gameProvider(gameParams).notifier).resetGame();
             },
           ),
         ],
@@ -114,12 +109,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               gridSize: widget.difficulty.gridSize,
                               gridWidth: gridWidth,
                               onTileTap: (index) {
-                                ref
-                                    .read(gameProvider({
-                                      'puzzle': widget.puzzle,
-                                      'difficulty': widget.difficulty,
-                                    }).notifier)
-                                    .moveTile(index);
+                                ref.read(gameProvider(gameParams).notifier).moveTile(index);
                               },
                             ),
                           );

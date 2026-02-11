@@ -8,6 +8,27 @@ import '../core/constants/app_constants.dart';
 import '../services/image_service.dart';
 import '../services/storage_service.dart';
 
+class GameParams {
+  final PuzzleConfig puzzle;
+  final DifficultyLevel difficulty;
+
+  const GameParams({
+    required this.puzzle,
+    required this.difficulty,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GameParams &&
+          runtimeType == other.runtimeType &&
+          puzzle.id == other.puzzle.id &&
+          difficulty == other.difficulty;
+
+  @override
+  int get hashCode => puzzle.id.hashCode ^ difficulty.hashCode;
+}
+
 class GameState {
   final List<Tile> tiles;
   final int moves;
@@ -188,13 +209,11 @@ class GameNotifier extends StateNotifier<GameState> {
   }
 }
 
-final gameProvider = StateNotifierProvider.family<GameNotifier, GameState, Map<String, dynamic>>(
+final gameProvider = StateNotifierProvider.autoDispose.family<GameNotifier, GameState, GameParams>(
   (ref, params) {
-    final puzzle = params['puzzle'] as PuzzleConfig;
-    final difficulty = params['difficulty'] as DifficultyLevel;
     return GameNotifier(
-      puzzle,
-      difficulty,
+      params.puzzle,
+      params.difficulty,
     );
   },
 );
