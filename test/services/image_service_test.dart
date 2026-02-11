@@ -1,15 +1,95 @@
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_puzzle_game/services/image_service.dart';
 import 'package:movie_puzzle_game/models/tile.dart';
 import 'package:image/image.dart' as img;
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('ImageService', () {
     late ImageService imageService;
 
     setUp(() {
       imageService = ImageService();
+    });
+
+    group('loadImageFromAssets', () {
+      test('successfully loads image from assets', () async {
+        // Create a test image
+        final testImage = img.Image(width: 100, height: 100);
+        img.fill(testImage, color: img.ColorRgb8(255, 0, 0));
+        final testImageData = Uint8List.fromList(img.encodePng(testImage));
+
+        // Mock the asset bundle
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+          final String key = utf8.decode(message!.buffer.asUint8List());
+          if (key == 'assets/images/puzzle_1.jpg') {
+            return ByteData.view(testImageData.buffer);
+          }
+          return null;
+        });
+
+        final result = await imageService.loadImageFromAssets('assets/images/puzzle_1.jpg');
+
+        expect(result, isNotNull);
+        expect(result, isA<Uint8List>());
+        expect(result.length, greaterThan(0));
+
+        // Clean up
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', null);
+      });
+
+      test('throws exception for non-existent asset', () async {
+        // Mock the asset bundle to return null for non-existent assets
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+          return null;
+        });
+
+        expect(
+          () => imageService.loadImageFromAssets('assets/images/non_existent.jpg'),
+          throwsA(isA<FlutterError>()),
+        );
+
+        // Clean up
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', null);
+      });
+
+      test('returns valid Uint8List that can be decoded', () async {
+        // Create a test image
+        final testImage = img.Image(width: 100, height: 100);
+        img.fill(testImage, color: img.ColorRgb8(0, 255, 0));
+        final testImageData = Uint8List.fromList(img.encodePng(testImage));
+
+        // Mock the asset bundle
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+          final String key = utf8.decode(message!.buffer.asUint8List());
+          if (key == 'assets/images/puzzle_2.jpg') {
+            return ByteData.view(testImageData.buffer);
+          }
+          return null;
+        });
+
+        final result = await imageService.loadImageFromAssets('assets/images/puzzle_2.jpg');
+        
+        // Verify the loaded data can be decoded as an image
+        final decodedImage = img.decodeImage(result);
+        expect(decodedImage, isNotNull);
+        expect(decodedImage!.width, 100);
+        expect(decodedImage.height, 100);
+
+        // Clean up
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', null);
+      });
     });
 
     group('splitImageIntoTiles', () {
